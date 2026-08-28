@@ -21,14 +21,4 @@
 ./build.sh
 ```
 
-## 发布 GitHub Release
 
-发布前先修改 `manifest.json` 中的版本号并提交，然后推送同版本标签。例如版本号为 `1.1.0`：
-
-```bash
-git push origin main
-git tag v1.1.0
-git push origin v1.1.0
-```
-
-标签推送后，GitHub Actions 会自动检查版本号、构建并验证 XPI，然后创建 Release，上传 `fusion-reader-for-zotero.xpi` 和 `SHA256SUMS`。标签必须与 `manifest.json` 中的版本一致，否则发布会停止。
