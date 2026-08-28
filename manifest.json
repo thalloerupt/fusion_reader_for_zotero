@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Fusion Reader for Zotero",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Open the selected Zotero PDF in Fusion Reader.",
   "author": "Fusion Reader",
   "icons": {
