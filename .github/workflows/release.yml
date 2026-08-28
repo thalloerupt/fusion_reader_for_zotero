@@ -1,0 +1,62 @@
+name: Release Zotero Plugin
+
+on:
+  push:
+    tags:
+      - "v[0-9]*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build and publish XPI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Validate release version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(python3 -c 'import json; print(json.load(open("manifest.json", encoding="utf-8"))["version"])')"
+          expected_tag="v${version}"
+
+          if [[ "${GITHUB_REF_NAME}" != "${expected_tag}" ]]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match manifest version ${version}." >&2
+            echo "Expected tag: ${expected_tag}" >&2
+            exit 1
+          fi
+
+          echo "version=${version}" >> "${GITHUB_OUTPUT}"
+
+      - name: Build XPI
+        shell: bash
+        run: ./build.sh
+
+      - name: Verify package
+        shell: bash
+        run: |
+          set -euo pipefail
+          unzip -t fusion-reader-for-zotero.xpi
+          unzip -Z1 fusion-reader-for-zotero.xpi | grep -Fxq manifest.json
+          sha256sum fusion-reader-for-zotero.xpi > SHA256SUMS
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            fusion-reader-for-zotero.xpi \
+            SHA256SUMS \
+            --verify-tag \
+            --title "Fusion Reader for Zotero ${{ steps.version.outputs.version }}" \
+            --generate-notes
