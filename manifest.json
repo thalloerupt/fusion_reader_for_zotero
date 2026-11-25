@@ -11,7 +11,7 @@
   "applications": {
     "zotero": {
       "id": "fusion-reader@thalluo.com",
-      "update_url": "https://raw.githubusercontent.com/thalluo/fusion_reader_for_zotero/main/updates.json",
+      "update_url": "https://raw.githubusercontent.com/thalloerupt/fusion_reader_for_zotero/main/updates.json",
       "strict_min_version": "7.0",
       "strict_max_version": "10.0.*"
     }
